@@ -19,7 +19,7 @@ int main(int argc, char ** argv) {
 
 //    fptExec(2);
 
-    fpt_wait();
+    fpt_wait(); //初次提交
 
 
     return 0;
