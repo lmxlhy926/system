@@ -1,0 +1,24 @@
+
+add_library(fpt_environ environ.cpp)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
