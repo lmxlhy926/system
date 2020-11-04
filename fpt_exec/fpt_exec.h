@@ -6,7 +6,10 @@
 #define FILE_PROCESS_THREAD_FPT_EXEC_H
 
 /*
- * 可执行程序名（相对位置/绝对位置），PATH环境变量，整个环境变量environ
+ * 如何在一个进程中启动其它的程序？
+ * 需要的参数：程序的名称, 程序的参数
+ *
+ * 可执行程序名（相对位置/绝对位置）, PATH环境变量, 整个环境变量environ
  * 参数形式：list vector
  * 环境变量：PATH environ
  *

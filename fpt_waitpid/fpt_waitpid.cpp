@@ -12,34 +12,46 @@
 using namespace std;
 
 int fpt_wait(){
-    int status;
-    pid_t waitpid;
-    pid_t pid = fork();
+    int index = 0;
+    int status = 0;
+    int completeFlag = 0;
+    pid_t pid = -1, waitPid = -1;
+    int loopnum = 5;
+
+    for(index = 0; index < loopnum; index++){
+        pid = fork();
+        if(pid == 0)
+            break;
+    }
 
     if(pid == -1){
         perror("fork failed");
         exit(-1);
+
     }else if(pid == 0){
-        cout << "i am child, my pid == " << getpid() << endl;
+        cout << "i am " << index << " child, my pid == " << getpid() << " my parentpid == " << getppid() << endl;
         sleep(3);
-        cout << "child dile -----" << endl;
-        exit(100);
+        exit(index);
+
     }else if(pid > 0){
-        cout << "i am parent, my pid == " << getpid() << " my son pid == " << pid << endl;
-        waitpid = wait(&status);
+        cout << "i am parent, my pid == " << getpid() << endl;
 
-        if(waitpid == -1){
-            perror("wait failed");
-            exit(-1);
-        }
+        do{
+            waitPid = waitpid(-1, &status, WNOHANG);
+            if(waitPid > 0){
+                if(WIFEXITED(status)){
+                    cout << "child exit with status " << WEXITSTATUS(status) << endl;
+                }else if (WIFSIGNALED(status)){
+                    cout << "child is killed by " << WTERMSIG(status) << endl;
+                }else if(WIFSTOPPED(status)){
+                    cout << "child is stopped by " << WSTOPSIG(status) << endl;
+                }
+                completeFlag++;
+            }
+        }while(completeFlag < loopnum);
 
-        if(WIFEXITED(status)){
-            cout << "child exit with status " << WEXITSTATUS(status) << endl;
-        }else if (WIFSIGNALED(status)){
-            cout << "child is killed by " << WTERMSIG(status) << endl;
-        }else if(WIFSTOPPED(status)){
-            cout << "child is stopped by " << WSTOPSIG(status) << endl;
-        }
     }
 
 }
+
+

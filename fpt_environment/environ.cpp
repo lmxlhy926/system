@@ -8,10 +8,7 @@
 #include <iostream>
 
 using namespace std;
-/*
- * 本质：char *envron[] = {"HOME=/home/itcat", "SHELL=/bin/bash", ....}
- * 所有的环境变量都存在于environ这个数组中
- */
+
 extern char **environ;
 
 /* 打印当前环境下的所有环境变量 */
@@ -40,15 +37,14 @@ char * my_getenv(const char *name)
 void envOperate(){
 
     char *value = getenv("ABC");
-    printf("value = %s\n", value);
+    printf("******value = %s\n", value);
 
     setenv("ABC", "abcvalue", 0);
-    value = getenv("abc");
-    cout << R"(getenv("abc") = )" << value << endl;
+    printf("******value = %s\n", getenv("ABC"));
+    printEnviron();
 
-    int ret = unsetenv("abc");
-    cout << "ret = " << ret << endl;
-
+    int ret = unsetenv("ABC");
+    cout << "******ret = " << ret << endl;
     printEnviron();
 }
 

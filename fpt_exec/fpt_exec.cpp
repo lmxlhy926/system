@@ -5,6 +5,7 @@
 #include <cstdio>
 #include "unistd.h"
 #include <iostream>
+#include "sys/wait.h"
 
 using namespace std;
 
@@ -16,10 +17,11 @@ extern char **environ;
 int fptExec(int option)
 {
     pid_t pid = fork();
-    if(pid == 0){
+    if(pid == 0){   //子进程执行单元
+        cout << "i am child process, my pid == " << getpid() << endl;
         switch(option){
             case 0:
-                execl("/bin/ls", "ls", "-l", nullptr);
+                execl("/bin/pwd", "pwd", nullptr);
                 perror("error: ");
                 break;
             case 1:
@@ -45,11 +47,14 @@ int fptExec(int option)
             default:
                 cout << "wrong option number" << endl;
         }
-    }else if(pid > 0){
-        cout << "i am parent, pid = " << getpid() << endl;
-    }
 
+    }else if(pid > 0){  //父进程执行单元
+        cout << "i am parent, pid = " << getpid() << endl;
+        wait(nullptr);
+    }
+    return 0;
 }
+
 
 
 

@@ -1,0 +1,1 @@
+add_library(fpt_pipe fpt_pipe.cpp)

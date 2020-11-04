@@ -6,6 +6,9 @@
 #define FILE_PROCESS_THREAD_ENVIRON_H
 
 /*
+ * 本质：char *envron[] = {"HOME=/home/itcat", "SHELL=/bin/bash", ....}
+ * 所有的环境变量都存在于environ这个数组中,下面的三个函数都是针对与该数组进行操作。
+ *
  * 三个函数定义于<stdlib.h>中
  * char *getenv(const char *name);
  * 成功： 返回环境变量的值； 失败： NULL (name 不存在)
