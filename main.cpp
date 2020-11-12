@@ -20,7 +20,7 @@ int main(int argc, char ** argv) {
 
 //    exectest();
 
-    ipc_pipe();
+    ipc_pipe3();
 
 
     return 0;

@@ -62,5 +62,8 @@
 
 int ipc_pipe(void);
 
+int ipc_pipe1(void);
+
+int ipc_pipe3(void);
 
 #endif //FILE_PROCESS_THREAD_FPT_PIPE_H
