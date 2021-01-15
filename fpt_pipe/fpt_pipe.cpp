@@ -30,6 +30,7 @@ int ipc_pipe(void){
     if(pid == -1){
         perror("fork");
         exit(-1);
+
     }else if(pid == 0){ //子进程写
         close(fd[0]);   //关闭读描述符
         sleep(1);
@@ -46,6 +47,12 @@ int ipc_pipe(void){
 
 }
 
+
+/*
+ * 将STDIN_FILENO指向管道的读端
+ * 将STDOUT_FILENO指向管道的写端
+ * 这样本来对标准输入输出文件进行操作的函数, 就可以对管道进行操作.
+ */
 int ipc_pipe1(void)
 {
     pid_t pid;
@@ -55,15 +62,19 @@ int ipc_pipe1(void)
     pid = fork();
 
     if (pid == 0) {  //child
-        close(fd[1]);	                //子进程从管道中读数据，关闭写端
-        dup2(fd[0], STDIN_FILENO);		//让wc从管道中读取数据
-        execlp("wc", "wc", "-l", NULL);	//wc命令默认从标准读入取数据
+        close(fd[1]);
+//        dup2(fd[0], STDIN_FILENO);		//STDIN_FILENO指向管道的读端
+//        execlp("wc", "wc", "-l", NULL);	//wc命令默认从STDIN_FILENO指向的文件读取数据, 现在就是从管道读取数据.
+        char buf[1000];
+        int length = read(fd[0], buf, sizeof(buf));
+        write(STDOUT_FILENO, buf, length);
 
     } else {
 
-        close(fd[0]);	//父进程向管道中写数据，关闭读端
-        dup2(fd[1], STDOUT_FILENO);		//将ls的结果写入管道中
-        execlp("ls", "ls", NULL);		//ls输出结果默认对应屏幕
+        close(fd[0]);
+        dup2(fd[1], STDOUT_FILENO);		//STDOUT_FILENO指向管道的写端
+        execlp("ls", "ls", NULL);	//ls的结果默认是输出到STDOUT_FILENO指向的文件, 现在STDOUT_FILENO指向管道,因此数据被写入到管道中
+
     }
 
     return 0;
@@ -95,23 +106,21 @@ int ipc_pipe3(void){
             break;
     }
 
-    if(i == 0){
+    if(i == 0){ //子进程1
         close(fd[0]);
         write(fd[1], "hello", strlen("hello"));
-        sleep(1);
 
-    }else if (i == 1){
+    }else if (i == 1){  //子进程2
         close(fd[0]);
         write(fd[1], "world", strlen("world"));
         sleep(3);
 
     }else if(i == 2){
         close(fd[1]);
-        while(1){
-            length = read(fd[0], storage, 1024);
+        while(1){   //当子进程结束后管道的写端都会关闭, 此时父进程再读管道, read返回0.
+           length = read(fd[0], storage, 1024);
             if(length > 0){
-                cout << length << endl;
-                cout << storage << endl;
+                cout << length << " : "<<  storage << endl;
             } else{
                 cout << length << endl;
                 break;
